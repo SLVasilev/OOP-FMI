@@ -42,7 +42,7 @@ public:
         return *this;
     }
 
-    virtual void printPeople() {
+    virtual void printPeople() const {
         cout << this -> name << ' ' << this -> age << endl;
     }
 
@@ -71,7 +71,7 @@ public:
         delete[]this -> eyeColour;
     }
 
-    Mother(const Mother &other) {
+    Mother(const Mother &other) : People(other) {
         cout << "copy constr. Mother\n";
         setEyeColour(other.eyeColour);
     }
@@ -84,7 +84,7 @@ public:
         return *this;
     }
 
-    void printPeople() {
+    void printPeople() const {
         People::printPeople();
         cout << this -> eyeColour << endl;
     }
@@ -114,7 +114,7 @@ public:
         delete[]this -> surName;
     }
 
-    Father(const Father &other) {
+    Father(const Father &other) : People(other) {
         cout << "Father constr.\n";
         setSurName(other.surName);
     }
@@ -128,16 +128,19 @@ public:
         return *this;
     }
 
-    void printPeople() {
+    void printPeople() const {
         People::printPeople();
         cout << this -> surName << endl;
     }
 
 };
-/*
+
 class Child : virtual public People, public Mother, public Father {
 public:
-    Child() : People(), Mother(), Father() {
+    Child(char*n = "Geoshko",
+          int a = 10,
+          char*eye = "Green",
+          char*s = "Dimitrov") : People(n, a), Mother(eye), Father(s) {
         cout << "Child constr.\n";
     }
 
@@ -146,14 +149,18 @@ public:
     }
 
     void printPeople() const {
-        printPeople();
+        People::printPeople();
     }
 
 };
-*/
+
 
 int main()
 {
+    Child c;
+    Mother m;
+    Father f;
+    c.printPeople();
 
     return 0;
 }
