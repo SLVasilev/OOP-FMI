@@ -155,12 +155,176 @@ public:
 };
 
 
+
+// moodle
+class Ticket {
+private:
+    char*name;
+    double price;
+
+    void copyTicket(char*n, double p) {
+        delete[] this -> name;
+        this -> name = new char[strlen(n) + 1];
+        assert(this -> name);
+        strcpy(this -> name, n);
+
+        this -> price = p;
+    }
+
+public:
+    Ticket(char*n = "Pepelqshka", double p = 10) {
+        this -> name = NULL;
+        copyTicket(n, p);
+    }
+
+};
+
+
+
+
+class Vehicle {
+private:
+    char*name;
+    char*model;
+    double height;
+    double weight;
+
+    void copyVehicle(char*n, char*m, double h, double w) {
+        delete[]this -> name;
+        this -> name = new char[strlen(n) + 1];
+        assert(this -> name);
+        strcpy(this -> name, n);
+
+        delete[]this -> model;
+        this -> model = new char[strlen(m) + 1];
+        assert(this -> model);
+        strcpy(this -> model, m);
+
+        this -> height = h;
+
+        this -> weight = w;
+    }
+
+public:
+    Vehicle(char*n = "Kola",
+            char*m = "BMW",
+            double h = 250,
+            double w = 2) {
+        this -> name = NULL;
+        this -> model = NULL;
+        copyVehicle(n, m, h, w);
+    }
+
+    ~Vehicle() {
+        delete[]this -> name;
+        delete[]this -> model;
+    }
+
+    Vehicle(const Vehicle &other) {
+        copyVehicle(other.name, other.model, other.height, other.weight);
+    }
+
+    Vehicle &operator=(const Vehicle &other) {
+        if(this != &other) {
+            copyVehicle(other.name, other.model, other.height, other.weight);
+        }
+        return *this;
+    }
+
+    bool canPassUnderBridge(float bridge)  const {
+        return this -> height < bridge;
+    }
+
+    bool canPassOverBridge(float tons) const {
+        return this -> weight < tons;
+    }
+
+};
+
+class landVehicle : virtual public Vehicle {
+private:
+    double maxSpeed;
+    int HP;
+
+public:
+    landVehicle(char*n = "Mercedes",
+                char*m = "S",
+                double h = 150,
+                double w = 2.5,
+                double mSpeed = 300,
+                int hp = 200) : Vehicle(n, m, h, w) {
+        this -> maxSpeed = mSpeed;
+        this -> HP = hp;
+    }
+
+    float getTime(float distance) const {
+        return distance / this -> maxSpeed;
+    }
+};
+
+class waterVehicle : virtual public Vehicle {
+private:
+    double vodoizmestimost;
+    double maxSpeedInNotes;
+
+public:
+    waterVehicle(char*n = "Vidra",
+                 char*m = "Hidra",
+                 double h = 400,
+                 double w = 3.4,
+                 double v = 5.1,
+                 double mSp = 200) : Vehicle(n, m, h, w) {
+        this -> vodoizmestimost = v;
+        this -> maxSpeedInNotes = mSp;
+    }
+
+    float getSpeedUpStream(float speedStream) const {
+        return this -> maxSpeedInNotes - speedStream;
+    }
+
+    float getSpeedDownStream(float speedStreem) const {
+        return this -> maxSpeedInNotes + speedStreem;
+    }
+
+    float getTimeUpStream(float distanceToTravel,
+                          float speedStream) const {
+        return distanceToTravel / getSpeedUpStream(speedStream);
+    }
+
+    float getTimeDownStream(float distanceToTravel,
+                            float speedStreem) const {
+        return distanceToTravel / getSpeedDownStream(speedStreem);
+    }
+};
+
+class AmphibiousVehicle : virtual Vehicle, public landVehicle, public waterVehicle {
+public:
+    AmphibiousVehicle(char*n = "Amphibia",
+                      char*m = "c200",
+                      double h = 111,
+                      double w = 2.75,
+                      double mSpeed = 150,
+                      int hp = 222,
+                      double v = 3.14,
+                      double mSp = 30) : Vehicle(n, m, h, w),
+                                         landVehicle(n, m, h, w, mSpeed, hp),
+                                         waterVehicle(n, m, h, w, v, mSp) { }
+    bool canGetThrough(int earthDist,
+                       float bridgeHeight,
+                       float waterDist,
+                       float stream) {
+        return getTime(earthDist) +
+               waterVehicle::getTimeUpStream(waterDist, stream) < 60.0 &&
+               canPassUnderBridge(bridgeHeight);
+    }
+};
+
+
+
 int main()
 {
-    Child c;
-    Mother m;
-    Father f;
-    c.printPeople();
+    AmphibiousVehicle a;
+    cout << a.canGetThrough(5000, 5, 5000, 10);
 
     return 0;
 }
