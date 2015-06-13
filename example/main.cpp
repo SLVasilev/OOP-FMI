@@ -140,7 +140,9 @@ public:
     Child(char*n = "Geoshko",
           int a = 10,
           char*eye = "Green",
-          char*s = "Dimitrov") : People(n, a), Mother(eye), Father(s) {
+          char*s = "Dimitrov") : People(n, a),
+                                 Mother(n, a, eye),
+                                 Father(n, a, s) {
         cout << "Child constr.\n";
     }
 
@@ -156,9 +158,10 @@ public:
 
 
 
+
 // moodle
 class Ticket {
-private:
+protected:
     char*name;
     double price;
 
@@ -172,12 +175,45 @@ private:
     }
 
 public:
+    void setPrice(double pr) {
+        this -> price = pr;
+    }
+
+    const double getPrice() const {
+        return this -> price;
+    }
+
     Ticket(char*n = "Pepelqshka", double p = 10) {
         this -> name = NULL;
         copyTicket(n, p);
     }
 
+    const void printTicket() const {
+        cout << this -> name << ' ' << this -> price << endl;
+    }
+
 };
+
+Ticket &isItForAdultOrStudent(bool document) {
+    if(document)
+    {
+        Ticket *ticketForAdultOrStudent;
+        ticketForAdultOrStudent = new Ticket;
+        ticketForAdultOrStudent -> setPrice(5);
+        return *ticketForAdultOrStudent;
+    }
+}
+
+double totalPrice(Ticket*all, int allSize) {
+    double priceOfTickets = 0;
+
+    for(int i = 0; i < allSize; i++) {
+        priceOfTickets += all[i].getPrice();
+    }
+
+    return priceOfTickets;
+}
+
 
 
 
@@ -297,7 +333,7 @@ public:
     }
 };
 
-class AmphibiousVehicle : virtual Vehicle, public landVehicle, public waterVehicle {
+class AmphibiousVehicle : public landVehicle, public waterVehicle {
 public:
     AmphibiousVehicle(char*n = "Amphibia",
                       char*m = "c200",
@@ -321,10 +357,160 @@ public:
 
 
 
+
+
+class Player {
+protected:
+    char*name;
+    double athletic;
+    double discipline;
+    char skill;
+
+public:
+    //THE BIG 4 !
+
+    virtual void setName(char*n) = 0;
+
+    virtual char*getName() const = 0;
+
+    virtual double getPotential() const = 0;
+
+    virtual double getPercentToFail() const = 0;
+
+    virtual double getSalary() const = 0;
+
+    virtual char*getType() const = 0;
+
+};
+
+class FP : public Player {
+private:
+    double monthSalary;
+
+public:
+    //THE BIG 4 !
+
+    virtual double getPotential() const {
+        return this -> athletic * this -> skill + this -> discipline;
+    }
+
+    virtual double getPercentToFail() const {
+        return this -> discipline - this -> skill;
+    }
+
+    virtual double getSalary() const {
+        return this -> monthSalary;
+    }
+
+    virtual char*getType() const {
+        return "football player";
+    }
+
+};
+
+class VP : public Player {
+private:
+    double daySalary;
+
+public:
+    //THE BIG 4 !
+
+    virtual double getPotential() const {
+        return this -> athletic + this -> skill + this -> discipline;
+    }
+
+    virtual double getPercentToFail() const {
+        return this -> discipline - this -> skill - this -> athletic;
+    }
+
+    virtual double getSalary() const {
+        return this -> daySalary * 30;
+    }
+
+    virtual char*getType() const {
+        return "volleyball player";
+    }
+
+};
+
+
+class Team {
+private:
+    char*name;
+    Player*all;
+    int numberOfPlayers;
+
+public:
+    // THE BIG 4 !
+
+    virtual bool addPlayer(Player &some) = 0;
+
+    virtual bool rmvPlayer(char*n) = 0;
+
+    virtual double calculateBills() = 0;
+
+};
+
+class FT : virtual public Team {
+public:
+     //THE BIG 4 !
+
+     virtual bool addPlayer(Player &some) {
+        if(strcmp(some.getName(), "football player") == 0) {
+            //...
+            return true;
+        }
+        else
+            return false;
+     }
+
+     virtual bool rmvPlayer(char*n) {
+        //for...
+     }
+
+     virtual double calculateBills() {
+        //find the size of array
+
+        //return teamSize * getSalary();
+     }
+
+};
+
+class VT : virtual public Team {
+public:
+    //THE BIG 4 !
+
+    //the same as FT
+
+};
+
+class CT : public FT, public VT {
+public:
+    //THE BIG 4 !
+
+    virtual bool addPlayer(Player &some) {
+        //if football || volleyball..
+    }
+
+    virtual bool rmvPlayer(char*n) {
+        //for...
+     }
+
+    virtual double calculateBills() {
+        //find the size of array
+
+        //return teamSize * getSalary();
+     }
+
+};
+
+
+
+
 int main()
 {
-    AmphibiousVehicle a;
-    cout << a.canGetThrough(5000, 5, 5000, 10);
+
+
 
     return 0;
 }
